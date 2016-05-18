@@ -150,10 +150,6 @@ class Generator extends \yii\gii\Generator{
             foreach ($this->getTables() as $tableName) {
                 $i++;
                 $tableSchema = $db->getTableSchema($tableName);
-                /*echo "<pre>";
-                print_r($tableSchema);
-                echo "</pre>";
-                exit;*/
 
                 $tableCaption=$this->getTableCaption($tableName);
                 $tableAlias=$this->getTableAlias($tableCaption);
@@ -247,6 +243,18 @@ class Generator extends \yii\gii\Generator{
                     break;
                 case 'boolean':
                     $coldata .= '->boolean()';
+                    break;
+                case 'datetime':
+                    $coldata .= '->boolean()';
+                    break;
+                case 'date':
+                    $coldata .= '->boolean()';
+                    break;
+                case 'timestamp':
+                    $coldata .= '->timestamp()';
+                    break;
+                case 'time':
+                    $coldata .= '->time()';
                     break;
                 default:
                     $coldata .= '->string(255)';
