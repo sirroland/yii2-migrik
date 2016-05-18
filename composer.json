@@ -1,5 +1,5 @@
 {
-  "name": "insolita/yii2-migration-generator",
+  "name": "sirroland/yii2-migration",
   "description": "gii tool for mass migration generation by Schema ",
   "type": "yii2-extension",
   "keywords": [
