@@ -12,13 +12,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require -dev --prefer-dist insolita/yii2-migration-generator "*"
+php composer.phar require -dev --prefer-dist sirroland/yii2-migration-generator "*"
 ```
 
 or add
 
 ```
-"insolita/yii2-migration-generator": "~1.0"
+"sirroland/yii2-migration-generator": "~1.0"
 ```
 
 to the require-dev section of your `composer.json` file.
