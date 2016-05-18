@@ -17,16 +17,18 @@ echo "<?php\n";
 ?>
 
 use yii\db\Schema;
-use yii\db\Migration;
+use insolita\migrik\db\Migration;
 
 class <?= $migrationName ?> extends Migration
 {
+    protected $_tableName = '<?= ($generator->usePrefix)?$tableAlias:$tableName ?>';
+
     public function safeUp()
     {
         $tableOptions = '<?=$generator->tableOptions?>';
 
         $this->createTable(
-            '<?= ($generator->usePrefix)?$tableAlias:$tableName ?>',
+            $this->_tableName,
             [
                 <?php foreach($tableColumns as $name=>$data):?>'<?=$name?>'=> <?=$data;?>,
                 <?php endforeach;?>
@@ -38,7 +40,6 @@ class <?= $migrationName ?> extends Migration
         $this->createIndex('<?=$name?>', '<?=$tableAlias?>','<?=implode(",",array_values($data['cols']))?>',<?=$data['isuniq']?>);<?php endif;?>
 <?php endforeach;?>
 <?php endif?>
-
     }
 
     public function safeDown()

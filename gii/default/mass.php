@@ -43,7 +43,7 @@ try{
 <?php if(!empty($tableRelations) && is_array($tableRelations)):?>
     <?php foreach($tableRelations as $table):?>
         <?php foreach($table['fKeys'] as $i=>$rel):?>
-  $this->addForeignKey('fk_<?=$table['tableName']?>_<?=$rel['pk']?>', '<?=$table['tableAlias']?>', '<?=$rel['pk']?>', '<?=$rel['ftable']?>', '<?=$rel['fk']?>');
+  $this->addForeignKey('fk_<?=$table['tableName']?>_<?=$rel['pk']?>', '<?=$table['tableAlias']?>', '<?=$rel['pk']?>', '<?=$rel['ftableAlias']?>', '<?=$rel['fk']?>');
         <?php endforeach;?>
     <?php endforeach;?>
 <?php endif?>

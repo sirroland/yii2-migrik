@@ -210,7 +210,7 @@ class Generator extends \yii\gii\Generator{
     }
 
 
-    public function getColumnType($col){
+    public function getColumnType($col) {
         $coldata=$append='';
         /**@var \yii\db\ColumnSchema $col**/
         if($col->autoIncrement){
@@ -249,6 +249,7 @@ class Generator extends \yii\gii\Generator{
                 foreach($constraint as $pk=>$fk){
                     if(!$pk){
                       $rels[$i]['ftable']=$fk;
+                      $rels[$i]['ftableAlias']=$this->getTableAlias($this->getTableCaption($fk)); #TODO FIX IT
                     }else{
                         $rels[$i]['pk']=$pk;
                         $rels[$i]['fk']=$fk;
