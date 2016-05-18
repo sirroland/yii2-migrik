@@ -14,13 +14,14 @@ echo "<?php\n";
 ?>
 
 use yii\db\Schema;
-use yii\db\Migration;
+use insolita\migrik\db\Migration;
 
-class <?= $migrationName ?> extends Migration
-{
-    public function safeUp()
-    {
-        $tableOptions = '<?=$generator->tableOptions?>';
+class <?= $migrationName ?> extends Migration {
+
+    protected $_tableName = '<?= ($generator->usePrefix)?$tableAlias:$tableName ?>';
+
+    public function safeUp() {
+
 $connection=Yii::$app-><?=$generator->db?>;
 $transaction=$connection->beginTransaction();
 try{
@@ -30,7 +31,7 @@ try{
         <?php foreach($tableData['columns'] as $name=>$data):?>
         '<?=$name?>'=> <?=$data;?>,
         <?php endforeach;?>
-        ], $tableOptions);
+        ], $this->_tableOptions);
 
 <?php if(!empty($tableData['indexes']) && is_array($tableData['indexes'])):?>
     <?php foreach($tableData['indexes'] as $name=>$data):?>

@@ -150,6 +150,11 @@ class Generator extends \yii\gii\Generator{
             foreach ($this->getTables() as $tableName) {
                 $i++;
                 $tableSchema = $db->getTableSchema($tableName);
+                /*echo "<pre>";
+                print_r($tableSchema);
+                echo "</pre>";
+                exit;*/
+
                 $tableCaption=$this->getTableCaption($tableName);
                 $tableAlias=$this->getTableAlias($tableCaption);
                 $tableIndexes=$this->genmode=='schema'?null:$this->generateIndexes($tableName);
@@ -210,35 +215,54 @@ class Generator extends \yii\gii\Generator{
     }
 
 
-    public function getColumnType($col) {
-        $coldata=$append='';
+    public function getColumnType($col){
+
+        $coldata='$this';
+
         /**@var \yii\db\ColumnSchema $col**/
-        if($col->autoIncrement){
-            $coldata = $col->type!==Schema::TYPE_BIGINT?'Schema::TYPE_PK':'Schema::TYPE_BIGPK';
-        }elseif(strpos($col->dbType,'set(')!==false){
-            $coldata ='"'.$col->dbType.'"';
-        }elseif(strpos($col->dbType,'enum(')!==false){
-            $coldata ='"'.$col->dbType.'"';
-        }elseif($col->dbType === 'tinyint(1)'){
-            $coldata ='Schema::TYPE_BOOLEAN';
-        }else{
-            $coldata='Schema::TYPE_'.strtoupper($col->type);
+        if($col->isPrimaryKey)
+            $coldata = $col->type == 'bigint' ? '$this->bigPrimaryKey('.$col->size.')' : '$this->primaryKey('.$col->size.')';
+        else {
+            switch ($col->type) {
+                case 'integer':
+                    $coldata .= '->integer('.$col->size.')';
+                    break;
+                case 'smallint':
+                    $coldata .= '->smallInteger('.$col->size.')';
+                    break;
+                case 'bigint':
+                    $coldata .= '->bigInteger('.$col->size.')';
+                    break;
+                case 'string':
+                    $coldata .= '->string('.$col->size.')';
+                    break;
+                case 'text':
+                    $coldata .= '->text()';
+                    break;
+                case 'decimal':
+                    $coldata .= '->decimal('.$col->precision.','.$col->scale.')';
+                    break;
+                case 'float':
+                    $coldata .= '->float('.$col->precision.')';
+                    break;
+                case 'boolean':
+                    $coldata .= '->boolean()';
+                    break;
+                default:
+                    $coldata .= '->string(255)';
+            }
         }
 
-        if($col->size && !$col->autoIncrement){
-            $append.=($col->scale)?'('.$col->size.','.$col->scale.')':'('.$col->size.')';
-        }
-        $append.=($col->unsigned && !$col->autoIncrement)?' unsigned':'';
-        $append.=(!$col->allowNull && !$col->autoIncrement)?' NOT NULL':'';
+        if($col->defaultValue)
+            $coldata .= '->defaultValue('.$col->defaultValue.')';
+        if(!$col->allowNull)
+            $coldata .= '->notNull()';
+        if($col->unsigned)
+            $coldata .= '->unsigned()';
+        if($col->comment)
+            $coldata .= '->comment('.$col->comment.')';
 
-        if(!is_null($col->defaultValue)){
-            $append.=" DEFAULT ".($col->defaultValue instanceof Expression?$col->defaultValue->expression:"'".$col->defaultValue."'");
-        }
-        if(!empty($col->comment)){
-            $append.=" COMMENT '".$col->comment."'";
-        }
-
-        return $coldata.'."'.$append.'"';
+        return $coldata;
     }
 
     public function generateRelations($schema){
@@ -249,7 +273,6 @@ class Generator extends \yii\gii\Generator{
                 foreach($constraint as $pk=>$fk){
                     if(!$pk){
                       $rels[$i]['ftable']=$fk;
-                      $rels[$i]['ftableAlias']=$this->getTableAlias($this->getTableCaption($fk)); #TODO FIX IT
                     }else{
                         $rels[$i]['pk']=$pk;
                         $rels[$i]['fk']=$fk;

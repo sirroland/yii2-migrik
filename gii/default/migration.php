@@ -19,21 +19,17 @@ echo "<?php\n";
 use yii\db\Schema;
 use insolita\migrik\db\Migration;
 
-class <?= $migrationName ?> extends Migration
-{
+class <?= $migrationName ?> extends Migration {
     protected $_tableName = '<?= ($generator->usePrefix)?$tableAlias:$tableName ?>';
 
-    public function safeUp()
-    {
-        $tableOptions = '<?=$generator->tableOptions?>';
-
+    public function safeUp() {
         $this->createTable(
             $this->_tableName,
             [
                 <?php foreach($tableColumns as $name=>$data):?>'<?=$name?>'=> <?=$data;?>,
                 <?php endforeach;?>
 ],
-            $tableOptions
+            $this->_tableOptions
         );
 <?php if(!empty($tableIndexes) && is_array($tableIndexes)):?><?php foreach($tableIndexes as $name=>$data):?><?php if($name!='PRIMARY'):?>
 
@@ -42,8 +38,7 @@ class <?= $migrationName ?> extends Migration
 <?php endif?>
     }
 
-    public function safeDown()
-    {
+    public function safeDown() {
 <?php if(!empty($tableIndexes) && is_array($tableIndexes)):?><?php foreach($tableIndexes as $name=>$data):?><?php if($name!='PRIMARY'):?>
         $this->dropIndex('<?=$name?>', '<?=$tableAlias?>');
 <?php endif;?><?php endforeach;?><?php endif?>
